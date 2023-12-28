@@ -1,3 +1,5 @@
+package Models;
+
 public class Product {
     private int serialNumber;
     private String name;
@@ -5,6 +7,7 @@ public class Product {
     private String category;
     private float price;
     private int availableQuantity;
+    private int requiredAmount;
 
 //    setter methods
 
@@ -26,6 +29,10 @@ public class Product {
 
     public void setAvailableQuantity(int availableQuantity) {
         this.availableQuantity = availableQuantity;
+    }
+
+    public void setRequiredAmount(int amount) {
+        this.requiredAmount = amount;
     }
 
     public void setSerialNumber(int serialNumber) {
@@ -55,5 +62,8 @@ public class Product {
 
     public int getAvailableQuantity() {
         return availableQuantity;
+    }
+    public int getRequiredAmount(){
+        return this.requiredAmount;
     }
 }

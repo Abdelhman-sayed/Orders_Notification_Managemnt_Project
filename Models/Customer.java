@@ -1,7 +1,9 @@
+package Models;
 public class Customer {
     private String username;
     private String password;
     private String email;
+    private String location;
     private float balance;
 //    for point no 10 in requirement
     private int numNotifiedInEmail;
@@ -27,6 +29,9 @@ public class Customer {
     public void setNumNotifiedInEmail(int numNotifiedInEmail) {
         this.numNotifiedInEmail = numNotifiedInEmail;
     }
+    public void setLocation(String location){
+        this.location = location;
+    }
 
 //    getter methods
 
@@ -48,5 +53,8 @@ public class Customer {
 
     public int getNumNotifiedInEmail() {
         return numNotifiedInEmail;
+    }
+    public String getLocation(){
+        return this.location;
     }
 }

@@ -1,10 +1,16 @@
+package Models;
+
+import java.util.ArrayList;
+
 public class Order {
     private int orderId;
     private String username;
     private  float shippingFees;
-
+    private ArrayList<Product> order;
+    public Order(){
+        order = new ArrayList<>();
+    }
 //    setter methods
-
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
@@ -16,8 +22,6 @@ public class Order {
     public void setShippingFees(float shippingFees) {
         this.shippingFees = shippingFees;
     }
-
-
 //    getter methods
 
     public int getOrderId() {
@@ -31,8 +35,13 @@ public class Order {
     public float getShippingFees() {
         return shippingFees;
     }
+
+    public void addProduct(Product p){
+        order.add(p);
+    }
+    public ArrayList<Product> getOrders(){
+        return order;
+    }
 }
-
-
 // pal counterPla++
 // ship counterShipping++
