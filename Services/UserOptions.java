@@ -10,7 +10,9 @@ public class UserOptions {
     CustomerDB customerDB;
     OrderDB orderDB;
     ProductDB productDB;
+    Notification notification;
     public UserOptions() {
+        notification = new Notification();
         customerDB = new CustomerDB();
         orderDB = new OrderDB();
         productDB = new ProductDB();
@@ -29,13 +31,19 @@ public class UserOptions {
 //            then store this product in arrayList of orders
             o.addProduct(p);
         }
+//        add notify
+        notification.addNotification(new OrderPlacementMail());
+//        then notify
+        notification.notify();
 //       update customer balance
         customerDB.updateBalance(customer, totalPrice);
 //       then ----> call add order that is exist in OrderDB
         orderDB.addOrder(o);
     }
+
     public void cancelOrder(Integer OrderId) {
-       Order COrder=orderDB.getOrder(OrderId);
+       Order COrder = orderDB.getOrder(OrderId);
        orderDB.cancelOrder(COrder);
     }
+//
 }
