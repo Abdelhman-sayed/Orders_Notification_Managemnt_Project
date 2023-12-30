@@ -1,4 +1,4 @@
-package fcai.sw.Models;
+package fcai.sw.OrdersNotificationManagemntProject.Models;
 public class Product {
     private int serialNumber;
     private String name;

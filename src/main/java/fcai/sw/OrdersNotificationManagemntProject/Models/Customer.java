@@ -1,4 +1,4 @@
-package fcai.sw.Models;
+package fcai.sw.OrdersNotificationManagemntProject.Models;
 public class Customer {
     private String username;
     private String password;

@@ -1,5 +1,5 @@
-package fcai.sw.Database;
-import fcai.sw.Models.Product;
+package fcai.sw.OrdersNotificationManagemntProject.Database;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import java.util.ArrayList;
 import java.util.Random;
 

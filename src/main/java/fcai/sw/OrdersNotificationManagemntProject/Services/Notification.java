@@ -1,6 +1,6 @@
-package fcai.sw.Services;
-import fcai.sw.Models.Customer;
-import fcai.sw.Models.Order;
+package fcai.sw.OrdersNotificationManagemntProject.Services;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 
 import java.util.LinkedList;
 import java.util.Queue;

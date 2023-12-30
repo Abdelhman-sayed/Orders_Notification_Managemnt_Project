@@ -1,7 +1,7 @@
-package fcai.sw.Services;
+package fcai.sw.OrdersNotificationManagemntProject.Services;
 
-import fcai.sw.Models.Customer;
-import fcai.sw.Models.Order;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import org.springframework.stereotype.Service;
 
 @Service

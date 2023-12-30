@@ -1,4 +1,4 @@
-package fcai.sw.Models;
+package fcai.sw.OrdersNotificationManagemntProject.Models;
 import java.util.ArrayList;
 
 public class Order {

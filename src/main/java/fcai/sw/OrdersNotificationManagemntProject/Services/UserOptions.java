@@ -1,11 +1,10 @@
-package fcai.sw.Services;
-import fcai.sw.Database.CustomerDB;
-import fcai.sw.Database.OrderDB;
-import fcai.sw.Database.ProductDB;
-import fcai.sw.Models.Customer;
-import fcai.sw.Models.Order;
-import fcai.sw.Models.Product;
-import org.springframework.stereotype.Component;
+package fcai.sw.OrdersNotificationManagemntProject.Services;
+import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
+import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
+import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

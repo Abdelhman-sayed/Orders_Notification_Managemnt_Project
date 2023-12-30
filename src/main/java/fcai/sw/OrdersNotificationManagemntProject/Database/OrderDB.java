@@ -1,5 +1,6 @@
-package fcai.sw.Database;
-import fcai.sw.Models.Order;
+package fcai.sw.OrdersNotificationManagemntProject.Database;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
+
 import java.util.ArrayList;
 public class OrderDB {
     private ArrayList<Order>orders;

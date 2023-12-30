@@ -1,6 +1,6 @@
-package fcai.sw.Services;
-import fcai.sw.Database.CustomerDB;
-import fcai.sw.Models.Customer;
+package fcai.sw.OrdersNotificationManagemntProject.Services;
+import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,5 +17,10 @@ public class Authentication {
     }
     public boolean login(Customer customer){
         return customerDB.isExist(customer);
+    }
+
+    public String dummy(Customer customer){
+        return customer.getUsername() + " " +
+                customer.getBalance() + " "+customer.getPassword();
     }
 }

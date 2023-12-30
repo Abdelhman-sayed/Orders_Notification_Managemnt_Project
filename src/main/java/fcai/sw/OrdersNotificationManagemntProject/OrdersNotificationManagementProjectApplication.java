@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OrdersNotificationManagemntProjectApplication {
+public class OrdersNotificationManagementProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OrdersNotificationManagemntProjectApplication.class, args);
+		SpringApplication.run(OrdersNotificationManagementProjectApplication.class, args);
 	}
-
 }
+

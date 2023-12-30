@@ -1,10 +1,15 @@
-package fcai.sw.Database;
-import fcai.sw.Models.Customer;
+package fcai.sw.OrdersNotificationManagemntProject.Database;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Random;
+@Service
 public class CustomerDB {
-    private ArrayList<Customer> customerDatabase;
-    public CustomerDB(){}
+    private static ArrayList<Customer> customerDatabase;
+    public CustomerDB(){customerDatabase = new ArrayList<>();}
     public int getNumUsers(){
         return customerDatabase.size();
     }
@@ -36,6 +41,10 @@ public class CustomerDB {
     }
 //   check if this username is Unique
     public boolean isUnique(Customer customer){
+        if (customerDatabase.isEmpty()){
+            return true;
+        }
+
         for (int i = 0; i < getNumUsers(); i++) {
             // Username is not unique
             if(customer.getUsername().equals(customerDatabase.get(i).getUsername()))
@@ -57,6 +66,6 @@ public class CustomerDB {
 //   add new customer
     public String addCustomer(Customer customer){
         customerDatabase.add(customer);
-        return"This Customer is added successfully";
+        return "This Customer is added successfully";
     }
 }
