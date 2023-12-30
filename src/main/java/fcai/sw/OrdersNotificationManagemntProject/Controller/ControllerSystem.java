@@ -4,23 +4,20 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
 import fcai.sw.OrdersNotificationManagemntProject.Services.UserOptions;
 import org.json.JSONException;
-import org.springframework.boot.jackson.JsonComponentModule;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 
 @RestController
 @RequestMapping("/API")
 public class ControllerSystem {
-    private final JsonComponentModule json;
     private UserOptions userOptions;
     private TokenGenerator tokenGenerator;
     private Authentication authentication;
 
-    public ControllerSystem(JsonComponentModule json) {
+    public ControllerSystem() {
         tokenGenerator = new TokenGenerator();
         userOptions = new UserOptions();
         authentication = new Authentication();
-        this.json = json;
     }
 
     //  register customer
@@ -45,7 +42,7 @@ public class ControllerSystem {
         if (authentication.login(customer)) {
             String token = tokenGenerator.generateToken(customer.getUsername());
             response.setStatus(true);
-            response.setMessage("Hello, " + customer.getUsername() + ". You've Logged in Successfully :)\n");
+            response.setMessage("Hello, " + customer.getUsername() + ". You've Logged in Successfully :)");
             response.setToken(token);
             return response;
         } else {
