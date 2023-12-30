@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 @Service
-public class UserOptions {
+public class CustomerService {
     CustomerDB customerDB;
     OrderDB orderDB;
     ProductDB productDB;
     Notification notification;
-    public UserOptions() {
+    public CustomerService() {
         notification = new Notification();
         customerDB = new CustomerDB();
         orderDB = new OrderDB();

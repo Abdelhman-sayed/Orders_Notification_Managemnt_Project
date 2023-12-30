@@ -68,4 +68,15 @@ public class CustomerDB {
         customerDatabase.add(customer);
         return "This Customer is added successfully";
     }
+    public Customer searchMostNotifiedEmail(){
+        int mx = 0;
+        Customer customer = new Customer();
+        for(int i = 0;i < getNumUsers();i++){
+            if(customerDatabase.get(i).getNumNotifiedInEmail() > mx){
+                customer = customerDatabase.get(i);
+                mx = customerDatabase.get(i).getNumNotifiedInEmail();
+            }
+        }
+        return customer;
+    }
 }

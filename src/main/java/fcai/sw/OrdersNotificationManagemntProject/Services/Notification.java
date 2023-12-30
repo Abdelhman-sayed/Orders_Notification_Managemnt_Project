@@ -14,6 +14,13 @@ public class Notification {
         shippingOrder  = 0;
         notifications = new LinkedList<>();
     }
+//    get methods
+    public int getPlacementOrder(){
+        return placementOrder;
+    }
+    public int getShippingOrder(){
+        return shippingOrder;
+    }
 //  add mail to notify it
     public  void addNotification(MailGenerator mailGenerator){
         if(mailGenerator instanceof OrderPlacementMail)

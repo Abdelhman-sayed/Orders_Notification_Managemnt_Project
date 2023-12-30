@@ -2,21 +2,23 @@ package fcai.sw.OrdersNotificationManagemntProject.Controller;
 
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
-import fcai.sw.OrdersNotificationManagemntProject.Services.UserOptions;
+import fcai.sw.OrdersNotificationManagemntProject.Services.CustomerService;
 import org.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/API")
 public class ControllerSystem {
-    private UserOptions userOptions;
+    private CustomerService customerService;
     private TokenGenerator tokenGenerator;
     private Authentication authentication;
 
     public ControllerSystem() {
         tokenGenerator = new TokenGenerator();
-        userOptions = new UserOptions();
+        customerService = new CustomerService();
         authentication = new Authentication();
     }
 
@@ -36,19 +38,19 @@ public class ControllerSystem {
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody Customer customer) {
-        Response response = new Response();
+    public HttpServletResponse login(@RequestBody Customer customer, HttpServletResponse res) {
 
         if (authentication.login(customer)) {
             String token = tokenGenerator.generateToken(customer.getUsername());
-            response.setStatus(true);
-            response.setMessage("Hello, " + customer.getUsername() + ". You've Logged in Successfully :)");
-            response.setToken(token);
-            return response;
+            tokenGenerator.setTokenCookie(res, token);
+//            response.setStatus(true)
+//            response.setMessage();
+//            response.setToken(token);
+            return res;
         } else {
-            response.setStatus(false);
-            response.setMessage("Sorry, Invalid Cardinalities. Please Try Again.");
-            return response;
+//            response.setStatus(false);
+//            response.setMessage("Sorry, Invalid Cardinalities. Please Try Again.");
+            return res;
         }
     }
 
@@ -62,6 +64,17 @@ public class ControllerSystem {
             return "Order placed successfully!";
         } else {
             return "Unauthorized access. Please provide a valid token.";
+        }
+    }
+
+    @GetMapping("/someEndpoint")
+    public String someEndpoint(@CookieValue(name = "token", required = false) String jwtToken) {
+        if (jwtToken != null) {
+            // Token is present in the cookie
+            return "JWT Token: " + jwtToken;
+        } else {
+            // Token is not present in the cookie
+            return "No JWT Token found in the cookie";
         }
     }
 }
