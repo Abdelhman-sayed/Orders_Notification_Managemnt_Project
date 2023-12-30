@@ -5,10 +5,13 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Date;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+
 
 @Component
 public class TokenGenerator {
@@ -39,14 +42,15 @@ public class TokenGenerator {
             return null;
         }
     }
-
-    public void setTokenCookie(HttpServletResponse response, String token) {
+    public void setTokenCookie(String token) {
+        HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
         long EXPIRATION_TIME = 864_000_000;
-        Cookie cookie = new Cookie("token", token);
-        cookie.setMaxAge((int) EXPIRATION_TIME / 1000); // Set cookie expiration in seconds
-        cookie.setSecure(true);
-        cookie.setPath("/user/");
-        cookie.setDomain("localhost");
-        response.addCookie(cookie); // Add the cookie to the HTTP response
+        if (response != null) {
+            Cookie cookie = new Cookie("jwtToken", token);
+            cookie.setMaxAge((int) EXPIRATION_TIME / 1000);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
     }
+
 }

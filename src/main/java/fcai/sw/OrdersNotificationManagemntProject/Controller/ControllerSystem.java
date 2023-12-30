@@ -6,8 +6,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Services.CustomerService;
 import org.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/API")
@@ -38,19 +37,18 @@ public class ControllerSystem {
     }
 
     @PostMapping("/login")
-    public HttpServletResponse login(@RequestBody Customer customer, HttpServletResponse res) {
-
+    public Response login(@RequestBody Customer customer) {
+        Response response = new Response();
         if (authentication.login(customer)) {
             String token = tokenGenerator.generateToken(customer.getUsername());
-            tokenGenerator.setTokenCookie(res, token);
-//            response.setStatus(true)
-//            response.setMessage();
-//            response.setToken(token);
-            return res;
+            tokenGenerator.setTokenCookie(token);
+            response.setStatus(true);
+            response.setMessage("Hello, " + customer.getUsername() + ". You've logged in successfully :) (Your Token Saved in your Cookies)");
+            return response;
         } else {
-//            response.setStatus(false);
-//            response.setMessage("Sorry, Invalid Cardinalities. Please Try Again.");
-            return res;
+            response.setStatus(false);
+            response.setMessage("Sorry, Invalid Cardinalities. Please Try Again.");
+            return response;
         }
     }
 
@@ -77,4 +75,9 @@ public class ControllerSystem {
             return "No JWT Token found in the cookie";
         }
     }
+    @PostMapping("/makeOrder12")
+    public void makeOrder(@RequestBody Map<Integer, Integer> userProducts, @RequestBody Customer customer) {
+
+    }
+
 }
