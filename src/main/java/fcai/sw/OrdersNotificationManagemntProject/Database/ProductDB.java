@@ -1,14 +1,19 @@
 package fcai.sw.OrdersNotificationManagemntProject.Database;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class ProductDB {
-    private static ArrayList<Product> products;
+    // get product from database to show it for user
+    @Getter
+    private static ArrayList<Product> products = new ArrayList<>();
     public ProductDB()
     {
-        products = new ArrayList<>();
-        this.setData();
+        if(products.isEmpty()){
+            this.setData();
+        }
     }
     public void setData() {
         String[] PRODUCT_NAMES = {"Product1", "Product2", "Product3", "Product4", "Product5", "Product6", "Product7", "Product8", "Product9", "Product10"};
@@ -52,9 +57,5 @@ public class ProductDB {
                 break;
             }
         }
-    }
-    // get product from database to show it for user
-    public ArrayList<Product> getProducts(){
-        return products;
     }
 }

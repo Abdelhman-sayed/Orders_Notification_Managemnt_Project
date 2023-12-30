@@ -9,8 +9,8 @@ public class Authentication {
     public Authentication(){
         customerDB = new CustomerDB();
     }
-    public boolean isUniqueCustomer(Customer customer){
-        return customerDB.isUnique(customer);
+    public boolean isUniqueCustomer(String customerUsername){
+        return customerDB.isUnique(customerUsername);
     }
     public String register(Customer customer){
         return customerDB.addCustomer(customer);

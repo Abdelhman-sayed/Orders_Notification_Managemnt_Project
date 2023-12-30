@@ -27,13 +27,12 @@ public class CustomerController {
         customerService = new CustomerService();
         authentication = new Authentication();
     }
-
     //  register customer
     @PostMapping("/register")
     public Response register(@RequestBody Customer customer) {
         Response response = new Response();
 
-        if (!authentication.isUniqueCustomer(customer)) {
+        if (!authentication.isUniqueCustomer(customer.getUsername())) {
             response.setStatus(false);
             response.setMessage("This username is used before.");
             return response;
@@ -58,36 +57,16 @@ public class CustomerController {
             return response;
         }
     }
-
-//    @PostMapping("/makeOrder")
-//    // ***DUMMY IMP***
-//    public String makeOrder(@RequestBody String token) throws JSONException {
-//        JSONObject jsonObject = new JSONObject(token);
-//        String key = jsonObject.getString("token");
-//        String username = tokenGenerator.extractUsername(key);
-    //        if (username != null) {
-    //            return "Order placed successfully!";
-    //        } else {
-    //            return "Unauthorized access. Please provide a valid token.";
-    //        }
-//    }
-
     @PostMapping("/makeOrder")
     public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody OrderRequest orderRequest){
         String username = tokenGenerator.extractUsername(jwtToken);
 
-      if (username == null) {
+      if (username == null)
           return "Unauthorized access. Please provide a valid token.";
-      }
-       ProductDB productDB = new ProductDB();
-        float totalPrice = 0;
 
-        for (Map.Entry<Integer,Integer> entry : orderRequest.getUserProducts().entrySet()){
-            Product p = productDB.getProductBySN(entry.getKey());
-            totalPrice += p.getPrice();
-        }
-
-        customerService.makeOrder(orderRequest.getUserProducts(), totalPrice, orderRequest.getCustomer());
+      if(!authentication.isUniqueCustomer(username))
+          return "This user is not Exist";
+        customerService.makeOrder(orderRequest.getUserProducts(), orderRequest.getCustomer());
         return "Order Placed Successfully";
     }
 
@@ -98,5 +77,13 @@ public class CustomerController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    @PostMapping ("/ShippingOrder")
+    public String shipOrder(@RequestBody int orderId){
+        return customerService.shippingOrderState(orderId);
+    }
+    @PostMapping ("/CancelShippingOrder")
+    public String cancelShipOrder(@RequestBody int orderId){
+        return customerService.shippingOrderState(orderId);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 @Service
 public class CustomerService {
     CustomerDB customerDB;
@@ -24,23 +25,32 @@ public class CustomerService {
         productDB = new ProductDB();
     }
 //    map<idProduct, quantity>
-    public void makeOrder(Map<Integer, Integer> userProducts, float totalPrice, Customer customer) {
+    public void makeOrder(Map<Integer, Integer> userProducts, Customer customer) {
 //        first --> convert map to order
         Order o = new Order();
-        Product p = new Product();
+        float totalPrice = 0;
         for (Map.Entry<Integer, Integer> product: userProducts.entrySet()) {
 //          store serialNumber, requiredAmount in product
+            Product p = new Product();
             p.setSerialNumber(product.getKey());
             p.setRequiredAmount(product.getValue());
+//            calculate price
+            float price = productDB.getProductBySN(product.getKey()).getPrice();
+            totalPrice += (product.getValue() * price);
 //            update database of product
             productDB.update(p.getSerialNumber(),p.getRequiredAmount());
 //            then store this product in arrayList of orders
             o.addProduct(p);
         }
+        o.setTotalPrice(totalPrice);
+        o.setUsername(customer.getUsername());
+        o.getShipment().setShipped(false);
+        o.getShipment().setShippingFees(0);
+        o.setOrderId(orderDB.retrieveOrders().size()+1);
 //        add notify
         notification.addNotification(new OrderPlacementMail());
 //        then notify
-        notification.notify();
+        notification.notifyThroughMail(customer, o);
 //       update customer balance
         customerDB.updateBalance(customer, totalPrice);
 //       then ----> call add order that is exist in OrderDB
@@ -57,5 +67,11 @@ public class CustomerService {
         // Convert the ArrayList to String JSON
         String productsJson = objectMapper.writeValueAsString(productDB.getProducts());
         return productsJson;
+    }
+//   shipping order
+    public String shippingOrderState(int orderId){
+        float shippingFees = 12.0F;
+        Random random = new Random();
+        return orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F + random.nextFloat() * (4.5F - 0.5F));
     }
 }

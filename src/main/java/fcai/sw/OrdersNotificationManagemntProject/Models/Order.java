@@ -4,11 +4,10 @@ import java.util.ArrayList;
 public class Order {
     private int orderId;
     private String username;
-    private  float shippingFees;
+    private ShippmentOrder shipment;
 //    totalPrice for some order
     private float totalPrice;
 //    isShipping
-    private boolean isShipped;
     private ArrayList<Product> order;
     public Order(){
         order = new ArrayList<>();
@@ -22,17 +21,12 @@ public class Order {
         this.username = username;
     }
 
-    public void setShippingFees(float shippingFees) {
-        this.shippingFees = shippingFees;
-    }
     public void setTotalPrice(float totalPrice){
         this.totalPrice = totalPrice;
     }
-    public void setIsShipped(boolean isShipping){
-        this.isShipped = isShipping;
-    }
 //    getter methods
-
+    public void setShipment(ShippmentOrder shipment){this.shipment = shipment;}
+    public ShippmentOrder getShipment(){return this.shipment;}
     public int getOrderId() {
         return orderId;
     }
@@ -41,9 +35,6 @@ public class Order {
         return username;
     }
 
-    public float getShippingFees() {
-        return shippingFees;
-    }
 
     public void addProduct(Product p){
         order.add(p);
@@ -53,8 +44,5 @@ public class Order {
     }
     public float getTotalPrice(){
         return this.totalPrice;
-    }
-    public boolean getIsShipped(){
-        return this.isShipped;
     }
 }

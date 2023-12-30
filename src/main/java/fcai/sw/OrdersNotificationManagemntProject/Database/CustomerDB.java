@@ -1,5 +1,6 @@
 package fcai.sw.OrdersNotificationManagemntProject.Database;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -8,8 +9,13 @@ import java.util.ArrayList;
 import java.util.Random;
 @Service
 public class CustomerDB {
-    private static ArrayList<Customer> customerDatabase;
-    public CustomerDB(){customerDatabase = new ArrayList<>();}
+    private static ArrayList<Customer> customerDatabase = new ArrayList<>();;
+    public CustomerDB()
+    {
+        if(customerDatabase.isEmpty()){
+            setData();
+        }
+    }
     public int getNumUsers(){
         return customerDatabase.size();
     }
@@ -40,14 +46,13 @@ public class CustomerDB {
         return false;
     }
 //   check if this username is Unique
-    public boolean isUnique(Customer customer){
+    public boolean isUnique(String customerUsername){
         if (customerDatabase.isEmpty()){
             return true;
         }
-
         for (int i = 0; i < getNumUsers(); i++) {
             // Username is not unique
-            if(customer.getUsername().equals(customerDatabase.get(i).getUsername()))
+            if(customerUsername.equals(customerDatabase.get(i).getUsername()))
                 return false;
         }
         // OtherWise return true (unique)
@@ -78,5 +83,9 @@ public class CustomerDB {
             }
         }
         return customer;
+    }
+//   for testing
+    public static ArrayList<Customer> getCustomers(){
+        return customerDatabase;
     }
 }

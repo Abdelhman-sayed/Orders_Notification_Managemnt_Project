@@ -10,8 +10,8 @@ public class Notification {
     Queue<MailGenerator>notifications;
 //   to initialize placement and shipping with zero
     public  Notification(){
-        placementOrder = 0;
-        shippingOrder  = 0;
+        placementOrder = 5;
+        shippingOrder  = 7;
         notifications = new LinkedList<>();
     }
 //    get methods
