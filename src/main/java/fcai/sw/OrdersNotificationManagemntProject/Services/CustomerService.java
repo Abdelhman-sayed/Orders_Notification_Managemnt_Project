@@ -1,4 +1,6 @@
 package fcai.sw.OrdersNotificationManagemntProject.Services;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
@@ -7,6 +9,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 @Service
 public class CustomerService {
@@ -48,5 +51,11 @@ public class CustomerService {
        Order COrder = orderDB.getOrder(OrderId);
        orderDB.cancelOrder(COrder);
     }
-//
+// method to get product
+    public String getProductsFromDB() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        // Convert the ArrayList to String JSON
+        String productsJson = objectMapper.writeValueAsString(productDB.getProducts());
+        return productsJson;
+    }
 }

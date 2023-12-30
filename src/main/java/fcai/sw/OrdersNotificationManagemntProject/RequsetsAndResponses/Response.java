@@ -1,4 +1,4 @@
-package fcai.sw.OrdersNotificationManagemntProject.Controller;
+package fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses;
 
 import lombok.Getter;
 

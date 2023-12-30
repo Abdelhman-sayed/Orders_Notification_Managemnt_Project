@@ -45,6 +45,7 @@ public class ProductDB {
     }
     // get product from database to show it for user
     public ArrayList<Product> getProducts(){
+        this.setData();
         return products;
     }
 }

@@ -1,4 +1,4 @@
-package fcai.sw.OrdersNotificationManagemntProject.Controller;
+package fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -17,7 +17,7 @@ import jakarta.servlet.http.Cookie;
 public class TokenGenerator {
     private static final String SECRET_KEY = "eyJhbGciOiJIUzUxMiJ9eyJzdWIiOiJhaG1lZDEyMiIsImV4cCI6MTcwNDc5MTM1MX0TmoVnsrWKJNHKA130YA8cToKjKMk17287pMCLwqviP9fqjDSejdHflD3sslH1GMIiLEl8843Nsm5fo6g";
 
-    TokenGenerator() {
+    public TokenGenerator() {
     }
 
     public String generateToken(String username) {
@@ -42,6 +42,7 @@ public class TokenGenerator {
             return null;
         }
     }
+
     public void setTokenCookie(String token) {
         HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
         long EXPIRATION_TIME = 864_000_000;
@@ -52,5 +53,4 @@ public class TokenGenerator {
             response.addCookie(cookie);
         }
     }
-
 }
