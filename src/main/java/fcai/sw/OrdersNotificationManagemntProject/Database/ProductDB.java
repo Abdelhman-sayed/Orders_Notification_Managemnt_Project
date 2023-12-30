@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ProductDB {
-    private ArrayList<Product>products;
+    private static ArrayList<Product> products;
     public ProductDB()
     {
         products = new ArrayList<>();
+        this.setData();
     }
     public void setData() {
         String[] PRODUCT_NAMES = {"Product1", "Product2", "Product3", "Product4", "Product5", "Product6", "Product7", "Product8", "Product9", "Product10"};
@@ -24,6 +25,15 @@ public class ProductDB {
             product.setAvailableQuantity(random.nextInt(100)); // Random integer available quantity between 0 and 99
             products.add(product);
         }
+    }
+
+    public Product getProductBySN(int serialNumber){
+        for (int i = 0; i < products.size(); i++){
+            if (serialNumber == products.get(i).getSerialNumber()) {
+                return products.get(i);
+            }
+        }
+        return null;
     }
     public boolean checkAvailability(Product product){
         for (int i = 0; i < products.size(); i++){
@@ -45,7 +55,6 @@ public class ProductDB {
     }
     // get product from database to show it for user
     public ArrayList<Product> getProducts(){
-        this.setData();
         return products;
     }
 }

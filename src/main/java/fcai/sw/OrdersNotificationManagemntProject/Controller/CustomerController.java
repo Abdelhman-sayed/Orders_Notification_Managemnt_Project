@@ -1,6 +1,8 @@
 package fcai.sw.OrdersNotificationManagemntProject.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
@@ -10,6 +12,8 @@ import org.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/API")
@@ -71,13 +75,19 @@ public class CustomerController {
     @PostMapping("/makeOrder")
     public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody OrderRequest orderRequest){
         String username = tokenGenerator.extractUsername(jwtToken);
-        if (username == null) {
-            return "Unauthorized access. Please provide a valid token.";
-        }
+
+      if (username == null) {
+          return "Unauthorized access. Please provide a valid token.";
+      }
+       ProductDB productDB = new ProductDB();
         float totalPrice = 0;
-        customerService.makeOrder(orderRequest.getUserProducts(),
-                        totalPrice,
-                orderRequest.getCustomer());
+
+        for (Map.Entry<Integer,Integer> entry : orderRequest.getUserProducts().entrySet()){
+            Product p = productDB.getProductBySN(entry.getKey());
+            totalPrice += p.getPrice();
+        }
+
+        customerService.makeOrder(orderRequest.getUserProducts(), totalPrice, orderRequest.getCustomer());
         return "Order Placed Successfully";
     }
 
