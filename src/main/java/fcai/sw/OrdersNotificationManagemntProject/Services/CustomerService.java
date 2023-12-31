@@ -69,9 +69,13 @@ public class CustomerService {
         return productsJson;
     }
 //   shipping order
-    public String shippingOrderState(int orderId){
+    public String makeShippingOrder(int orderId){
         float shippingFees = 12.0F;
         Random random = new Random();
         return orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F + random.nextFloat() * (4.5F - 0.5F));
+    }
+//    return state to check --> possibility of make this service
+    public int showShipmentState(int orderId){
+        return orderDB.shipmentState(orderId);
     }
 }

@@ -80,10 +80,18 @@ public class CustomerController {
     }
     @PostMapping ("/ShippingOrder")
     public String shipOrder(@RequestBody int orderId){
-        return customerService.shippingOrderState(orderId);
+//        we must check if this order we can make ship or no
+//        if it is shipped already so we can not make shipment again
+        if(customerService.showShipmentState(orderId) == 1)
+            return "This order is already shipped.";
+        return customerService.makeShippingOrder(orderId);
     }
     @PostMapping ("/CancelShippingOrder")
     public String cancelShipOrder(@RequestBody int orderId){
-        return customerService.shippingOrderState(orderId);
+//        we must check if this order we can cancel ship of it or no
+//        if it is canceled or not shipped before so we can not cancel shipment
+        if(customerService.showShipmentState(orderId) == 0)
+            return "This order is canceled or not shipped before.";
+        return customerService.makeShippingOrder(orderId);
     }
 }

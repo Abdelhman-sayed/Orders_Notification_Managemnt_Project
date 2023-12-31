@@ -24,17 +24,33 @@ public class OrderDB {
         }
         return o;
     }
-
+//    delete order
     public void cancelOrder(Order order) {
         orders.remove(order);
     }
-
-    //    retrive Orders from DB
+//   return state of shipment
+    public int shipmentState(int orderId){
+        int state = -1;
+//        state --> -1 --> this not exist
+//        state ---> 1 ---> shipped
+//        state ---> 0 ----> not shipped
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getOrderId() == (orderId)) {
+                Order o = orders.get(i);
+                ShippmentOrder ship = o.getShipment();
+                state = (ship.isShipped())?1:0;
+                break;
+            }
+        }
+        return state;
+    }
+    //  retrieve Orders from DB
     public ArrayList<Order> retrieveOrders() {
         return orders;
     }
 
-    //    convert state of shipping order from false to true and add Shippingfees
+    //    convert state of shipping order from false to true and add Shipping fees
+    //    convert state of shipping order from true to false and add Shipping fees --> 0
     public String shipOrderChangeState(int orderId, float shippingFees, float currentTime) {
         for (int i = 0; i < orders.size(); i++) {
             if (orders.get(i).getOrderId() == (orderId)) {
