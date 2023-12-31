@@ -37,6 +37,7 @@ public class CustomerService {
             Product p = new Product();
             p.setSerialNumber(product.getKey());
             p.setRequiredAmount(product.getValue());
+            p.setName(productDB.getProductBySN(product.getKey()).getName());
 //            calculate price
             float price = productDB.getProductBySN(product.getKey()).getPrice();
             totalPrice += (product.getValue() * price);
@@ -54,6 +55,8 @@ public class CustomerService {
         String messageThroughEmail = notification.makeNotification(typePlacement, customer, o);
 //       update customer balance
         customerDB.updateBalance(customer.getUsername(), totalPrice);
+        System.out.println(totalPrice);
+        System.out.println(customer.getUsername());
         //       then ----> call add order that is exist in OrderDB
         orderDB.addOrder(o);
         return messageThroughEmail;
