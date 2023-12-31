@@ -41,12 +41,9 @@ public class CustomerService {
         float totalPrice = 0;
         for (Map.Entry<Integer, Integer> product: userProducts.entrySet()) {
 //          store serialNumber, requiredAmount in product
-            Product p = new Product();
-            p.setSerialNumber(product.getKey());
-            p.setRequiredAmount(product.getValue());
-            p.setName(productDB.getProductBySN(product.getKey()).getName());
+            Product p = productDB.getProductBySN(product.getKey());
 //            calculate price
-            float price = productDB.getProductBySN(product.getKey()).getPrice();
+            float price = p.getPrice();
             totalPrice += (product.getValue() * price);
 //            update database of product
             productDB.update(p.getSerialNumber(),p.getRequiredAmount());
@@ -56,6 +53,7 @@ public class CustomerService {
         o.setTotalPrice(totalPrice);
         o.setUsername(customer.getUsername());
         o.setOrderId(orderDB.retrieveOrders().size()+1);
+        o.setShipment(new ShippmentOrder());
 //        update numNotifiedInEmail in customer DB
         customerDB.updateNumNotifiedInEmail(customer.getUsername());
 //        create generator based on type
