@@ -58,4 +58,8 @@ public class AdminController {
     public  String showOrderShipmentState(@RequestBody Order order){
         return adminService.getShipmentState(order.getOrderId());
     }
+    @GetMapping("/ShowCompoundOrder")
+    public String showAllCompoundOrder() throws JsonProcessingException {
+        return adminService.showCompoundOrder();
+    }
 }

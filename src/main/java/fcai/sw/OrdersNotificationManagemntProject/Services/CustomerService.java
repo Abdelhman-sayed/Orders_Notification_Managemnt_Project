@@ -1,6 +1,7 @@
 package fcai.sw.OrdersNotificationManagemntProject.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fcai.sw.OrdersNotificationManagemntProject.Database.CompoundOrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
@@ -8,6 +9,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
+import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,9 @@ public class CustomerService {
     OrderDB orderDB;
     ProductDB productDB;
     Notification notification;
+    CompoundOrderDB compoundOrderDB;
     public CustomerService() {
+        compoundOrderDB = new CompoundOrderDB();
         notification = new Notification();
         customerDB = new CustomerDB();
         orderDB = new OrderDB();
@@ -123,8 +127,7 @@ public class CustomerService {
     {
         return orderDB.shipmentState(orderId);
     }
-//    public String makeCompoundOrder(ArrayList<OrderRequest> compoundOrders){
-//        String res;
-//        for (OrderRequest)
-//    }
+    public void addCompoundOrderService(CompoundOrder compoundOrder){
+        compoundOrderDB.addCompoundOrder(compoundOrder);
+    }
 }

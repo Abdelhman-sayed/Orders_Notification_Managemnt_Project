@@ -4,7 +4,9 @@ import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
-import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.CompoundOrder;
+import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
+import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
+import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.CompoundOrderRequest;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
@@ -73,21 +75,27 @@ public class CustomerController {
         return "Order Placed Successfully" + Message;
     }
 
-
-//   make compound order
-@PostMapping("/makeCompoundOrder")
-    public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody CompoundOrder orderRequests)
+    //   make compound order
+    @PostMapping("/makeCompoundOrder")
+    public String makeCompoundOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody CompoundOrderRequest orderRequests)
     {
-        for (OrderRequest requestBody: orderRequests.getCompoundOrder()) {
-            System.out.println(requestBody.getCustomer() + "\n");
-            for (Map.Entry<Integer, Integer> product: requestBody.getUserProducts().entrySet()) 
-            {
-                System.out.println(product.getKey() + " " + product.getValue());
+        String message = "";
+        ArrayList<Order>all
+        for (Map.Entry<Integer, OrderRequest> orderR: orderRequests.getCompoundOrder().entrySet()) {
+            String username = orderR.getValue().getCustomer().getUsername();
+            if(authentication.isUniqueCustomer(username))
+               message += "Order "+ (orderR.getKey() + 1) + "\nThis user is not Exist\n";
+            else {
+                {
+                    message += "Order " + (orderR.getKey() + 1) + " : " + customerService.makeOrder(orderR.getValue().getUserProducts(), orderR.getValue().getCustomer()) + "\n";
+
+                }
             }
-            System.out.println();
         }
-        return null;
+        customerService.addCompoundOrderService(compoundOrder);
+        return message;
     }
+
     @GetMapping("/ShowProducts")
     public String showProducts(){
         try {
@@ -96,6 +104,7 @@ public class CustomerController {
             throw new RuntimeException(e);
         }
     }
+
     @PostMapping ("/ShippingOrder")
     public String shipOrder(@RequestBody Order order){
         int state = customerService.showShipmentState(order.getOrderId());
