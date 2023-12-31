@@ -4,6 +4,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
+import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.CompoundOrder;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
@@ -42,7 +44,6 @@ public class CustomerController {
         response.setMessage(authentication.register(customer));
         return response;
     }
-
     @PostMapping("/login")
     public Response login(@RequestBody Customer customer) {
         Response response = new Response();
@@ -70,6 +71,22 @@ public class CustomerController {
             return "This user is not Exist";
         String Message = customerService.makeOrder(orderRequest.getUserProducts(), orderRequest.getCustomer());
         return "Order Placed Successfully" + Message;
+    }
+
+
+//   make compound order
+@PostMapping("/makeCompoundOrder")
+    public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody CompoundOrder orderRequests)
+    {
+        for (OrderRequest requestBody: orderRequests.getCompoundOrder()) {
+            System.out.println(requestBody.getCustomer() + "\n");
+            for (Map.Entry<Integer, Integer> product: requestBody.getUserProducts().entrySet()) 
+            {
+                System.out.println(product.getKey() + " " + product.getValue());
+            }
+            System.out.println();
+        }
+        return null;
     }
     @GetMapping("/ShowProducts")
     public String showProducts(){

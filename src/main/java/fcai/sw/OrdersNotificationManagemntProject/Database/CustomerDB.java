@@ -18,7 +18,6 @@ public class CustomerDB {
     public int getNumUsers() {
         return customerDatabase.size();
     }
-
     public void setData() {
         String[] USERNAMES = {"user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"};
         String[] PASSWORDS = {"pass1@#", "pass2@#", "pass3@#", "pass4@#", "pass5@#", "pass6@#", "pass7@#", "pass8@#", "pass9@#", "pass10@#"};
@@ -37,7 +36,6 @@ public class CustomerDB {
             customerDatabase.add(customer);
         }
     }
-
     public Customer getCustomerByUsername(String usrName) {
         for (Customer customer : customerDatabase) {
             if (customer.getUsername().equals(usrName))
@@ -45,7 +43,6 @@ public class CustomerDB {
         }
         return null;
     }
-
     //    using during login
     public boolean isExist(Customer customer) {
         for (int i = 0; i < getNumUsers(); i++) {
@@ -54,7 +51,6 @@ public class CustomerDB {
         }
         return false;
     }
-
     //   check if this username is Unique
     public boolean isUnique(String customerUsername) {
         if (customerDatabase.isEmpty()) {
@@ -68,7 +64,6 @@ public class CustomerDB {
         // OtherWise return true (unique)
         return true;
     }
-
     //    update balance of customer
     public void updateBalance(String username, float money) {
         for (int i = 0; i < getNumUsers(); i++) {
@@ -78,7 +73,6 @@ public class CustomerDB {
             }
         }
     }
-
     //   add new customer
     public String addCustomer(Customer customer) {
         customerDatabase.add(customer);
@@ -96,7 +90,6 @@ public class CustomerDB {
         }
         return customer;
     }
-
     //    update state of shipment
     public void updateNumNotifiedInEmail(String username) {
         for (Customer customer : customerDatabase) {
