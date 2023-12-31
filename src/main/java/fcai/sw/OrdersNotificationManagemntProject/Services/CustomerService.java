@@ -69,9 +69,18 @@ public class CustomerService {
         return productsJson;
     }
 //   shipping order
-    public String makeShippingOrder(int orderId){
+    public String makeShippingOrder(int orderId, Customer customer){
         float shippingFees = 12.0F;
         Random random = new Random();
+//        if it's being shipped then reduce balance
+        if(orderDB.getOrder(orderId).getShipment().isShipped())
+        {
+            customerDB.updateBalance(customer, orderDB.getOrder(orderId).getShipment().getShippingFees());
+        }
+        else {
+            // return the fees back (increase balance)
+            customerDB.updateBalance(customer, -orderDB.getOrder(orderId).getShipment().getShippingFees());
+        }
         return orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F + random.nextFloat() * (4.5F - 0.5F));
     }
 //    return state to check --> possibility of make this service
