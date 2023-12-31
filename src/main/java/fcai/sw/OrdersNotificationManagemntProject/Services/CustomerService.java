@@ -7,6 +7,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
+import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,9 +26,11 @@ public class CustomerService {
         productDB = new ProductDB();
     }
 //    map<idProduct, quantity>
-    public void makeOrder(Map<Integer, Integer> userProducts, Customer customer) {
+    public String makeOrder(Map<Integer, Integer> userProducts, Customer customer) {
 //        first --> convert map to order
         Order o = new Order();
+        ShippmentOrder ship = new ShippmentOrder();
+        o.setShipment(ship);
         float totalPrice = 0;
         for (Map.Entry<Integer, Integer> product: userProducts.entrySet()) {
 //          store serialNumber, requiredAmount in product
@@ -44,22 +47,22 @@ public class CustomerService {
         }
         o.setTotalPrice(totalPrice);
         o.setUsername(customer.getUsername());
-        o.getShipment().setShipped(false);
-        o.getShipment().setShippingFees(0);
         o.setOrderId(orderDB.retrieveOrders().size()+1);
 //        add notify
-        notification.addNotification(new OrderPlacementMail());
+        MailGenerator typePlacement = new OrderPlacementMail();
 //        then notify
-        notification.notifyThroughMail(customer, o);
+        String messageThroughEmail = notification.makeNotification(typePlacement, customer, o);
 //       update customer balance
-        customerDB.updateBalance(customer, totalPrice);
-//       then ----> call add order that is exist in OrderDB
+        customerDB.updateBalance(customer.getUsername(), totalPrice);
+        //       then ----> call add order that is exist in OrderDB
         orderDB.addOrder(o);
+        return messageThroughEmail;
     }
-
-    public void cancelOrder(Integer OrderId) {
-       Order COrder = orderDB.getOrder(OrderId);
-       orderDB.cancelOrder(COrder);
+    public String cancelOrder(Integer OrderId) {
+       Order CancelOrder = orderDB.getOrder(OrderId);
+       customerDB.updateBalance(CancelOrder.getUsername(),-CancelOrder.getTotalPrice());
+       orderDB.cancelOrder(CancelOrder);
+       return "order cancelled successfully\n";
     }
 // method to get product
     public String getProductsFromDB() throws JsonProcessingException {
@@ -69,17 +72,24 @@ public class CustomerService {
         return productsJson;
     }
 //   shipping order
-    public String makeShippingOrder(int orderId, Customer customer){
+    public String makeShippingOrder(int orderId)
+    {
         float shippingFees = 12.0F;
         Random random = new Random();
+        Order o = orderDB.getOrder(orderId);
 //        if it's being shipped then reduce balance
-        if(orderDB.getOrder(orderId).getShipment().isShipped())
-        {
-            customerDB.updateBalance(customer, orderDB.getOrder(orderId).getShipment().getShippingFees());
-        }
+        if(orderDB.shipmentState(orderId) == 0)
+            if(customerDB.getCustomerByUsername(o.getUsername()).getBalance()>= o.getShipment().getShippingFees())
+                customerDB.updateBalance(o.getUsername(), o.getShipment().getShippingFees());
+            else
+                return "Your balance is less than the Shipping Fees";
+        // cancel shipping
         else {
             // return the fees back (increase balance)
-            customerDB.updateBalance(customer, -orderDB.getOrder(orderId).getShipment().getShippingFees());
+            if (orderDB.getOrder(orderId).getShipment().getCurrentTime()<((orderDB.getOrder(orderId).getShipment().getShipmentDuration())/2))
+                customerDB.updateBalance(o.getUsername(), -o.getShipment().getShippingFees());
+            else
+                return "You can't cancel the order as you can cancel the shipment within a maximum of one day.";
         }
         return orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F + random.nextFloat() * (4.5F - 0.5F));
     }

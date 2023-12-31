@@ -60,16 +60,16 @@ public class CustomerController {
     @PostMapping("/makeOrder")
     public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody OrderRequest orderRequest){
         String username = tokenGenerator.extractUsername(jwtToken);
-
       if (username == null)
           return "Unauthorized access. Please provide a valid token.";
-
-      if(!authentication.isUniqueCustomer(username))
-          return "This user is not Exist";
-        customerService.makeOrder(orderRequest.getUserProducts(), orderRequest.getCustomer());
-        return "Order Placed Successfully";
+        System.out.println("username : " + username);
+//      return true --> if customer is unique
+//      return false --> if is exist
+        if(authentication.isUniqueCustomer(username))
+            return "This user is not Exist";
+        String Message = customerService.makeOrder(orderRequest.getUserProducts(), orderRequest.getCustomer());
+        return "Order Placed Successfully" + Message;
     }
-
     @GetMapping("/ShowProducts")
     public String showProducts(){
         try {
@@ -80,18 +80,36 @@ public class CustomerController {
     }
     @PostMapping ("/ShippingOrder")
     public String shipOrder(@RequestBody int orderId){
+        int state = customerService.showShipmentState(orderId);
+        if(state == -1)
+            return "This order id not exist.";
 //        we must check if this order we can make ship or no
 //        if it is shipped already so we can not make shipment again
-        if(customerService.showShipmentState(orderId) == 1)
+        if(state == 1)
             return "This order is already shipped.";
         return customerService.makeShippingOrder(orderId);
     }
     @PostMapping ("/CancelShippingOrder")
     public String cancelShipOrder(@RequestBody int orderId){
+        int state = customerService.showShipmentState(orderId);
+        if(state == -1)
+            return "This order id not exist.";
 //        we must check if this order we can cancel ship of it or no
 //        if it is canceled or not shipped before so we can not cancel shipment
-        if(customerService.showShipmentState(orderId) == 0)
+        if(state == 0)
             return "This order is canceled or not shipped before.";
         return customerService.makeShippingOrder(orderId);
+    }
+//    cancel order ---> take order id as a parameter
+    @PostMapping("/CancelOrder")
+    public String cancelOrder(@RequestBody int orderId){
+        int state = customerService.showShipmentState(orderId);
+        if(state == -1)
+            return "This order id not exist.";
+//      shipped or no --> return shippingFees to customer
+        if(state == 1)
+            customerService.makeShippingOrder(orderId);
+//        return price OF this order to customer  and remove order
+        return customerService.cancelOrder(orderId);
     }
 }

@@ -16,6 +16,7 @@ public class CustomerDB {
             setData();
         }
     }
+
     public int getNumUsers(){
         return customerDatabase.size();
     }
@@ -37,7 +38,15 @@ public class CustomerDB {
             customerDatabase.add(customer);
         }
     }
-//    using during login
+    public Customer getCustomerByUsername(String usrName){
+        for (Customer customer:customerDatabase){
+            if(customer.getUsername() == usrName)
+                return customer;
+        }
+        return null;
+    }
+
+    //    using during login
     public boolean isExist(Customer customer){
         for (int i = 0; i < getNumUsers(); i++) {
             if(customer.getUsername().equals(customerDatabase.get(i).getUsername()) && customer.getPassword().equals(customerDatabase.get(i).getPassword()))
@@ -59,9 +68,9 @@ public class CustomerDB {
         return true;
     }
 //    update balance of customer
-    public void updateBalance(Customer customer, float money){
+    public void updateBalance(String username, float money){
         for (int i = 0; i < getNumUsers(); i++) {
-            if(customer.getUsername().equals(customerDatabase.get(i).getUsername()))
+            if(username.equals(customerDatabase.get(i).getUsername()))
             {
                 customerDatabase.get(i).setBalance(customerDatabase.get(i).getBalance() - money);
                 break;

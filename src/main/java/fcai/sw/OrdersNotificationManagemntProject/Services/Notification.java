@@ -22,16 +22,17 @@ public class Notification {
         return shippingOrder;
     }
 //  add mail to notify it
-    public  void addNotification(MailGenerator mailGenerator){
+    public  String makeNotification(MailGenerator mailGenerator, Customer customer, Order order){
         if(mailGenerator instanceof OrderPlacementMail)
             placementOrder++;
         else
             shippingOrder++;
-        notifications.add(mailGenerator);
+//        notifications.add(mailGenerator);
+        return mailGenerator.generator(customer, order);
     }
 //    notify method
-    public String notifyThroughMail(Customer customer, Order order){
-//        generate mail
-        return notifications.poll().generator(customer, order);
-    }
+//    public String notifyThroughMail(){
+////        generate mail
+//
+//    }
 }

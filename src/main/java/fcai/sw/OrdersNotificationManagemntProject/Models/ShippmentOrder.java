@@ -7,7 +7,12 @@ public class ShippmentOrder {
     private float shipmentDuration;
     private float currentTime;
     private  float shippingFees;
-
+    public ShippmentOrder(){
+        this.shippingFees = 0;
+        this.isShipped = false;
+        this.shipmentDuration = 0;
+        this.currentTime = 0;
+    }
 //    setter methods
 
     public void setShipped(boolean shipped) {
