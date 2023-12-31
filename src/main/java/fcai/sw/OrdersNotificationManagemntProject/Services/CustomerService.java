@@ -70,6 +70,7 @@ public class CustomerService {
         orderDB.addOrder(o);
         return messageThroughEmail;
     }
+
     public String cancelOrder(Integer OrderId)
     {
        Order CancelOrder = orderDB.getOrder(OrderId);
@@ -129,5 +130,13 @@ public class CustomerService {
     }
     public void addCompoundOrderService(CompoundOrder compoundOrder){
         compoundOrderDB.addCompoundOrder(compoundOrder);
+    }
+
+    public Order getLastOrder(){
+        return orderDB.getLastOrder();
+    }
+
+    public int getCompoundOrderLastID(){
+        return compoundOrderDB.getSize();
     }
 }

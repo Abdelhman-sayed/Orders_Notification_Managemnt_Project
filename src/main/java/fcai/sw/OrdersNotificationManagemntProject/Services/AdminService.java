@@ -17,10 +17,10 @@ public class AdminService {
     private CustomerDB customerDB;
     private Notification notification;
     private OrderDB orderDB;
-    private CompoundOrder compoundOrder;
+    private CompoundOrderDB compoundOrderDB;
 
     public AdminService() {
-        compoundOrder = new CompoundOrder();
+        compoundOrderDB = new CompoundOrderDB();
         orderDB = new OrderDB();
         customerDB = new CustomerDB();
         notification = new Notification();
@@ -71,7 +71,7 @@ public class AdminService {
     public String showCompoundOrder() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         // Convert the ArrayList to String JSON
-        String ordersJson = objectMapper.writeValueAsString(compoundOrder.getCompoundOrder());
+        String ordersJson = objectMapper.writeValueAsString(compoundOrderDB.getCompoundOrders());
         return ordersJson;
     }
 }

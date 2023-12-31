@@ -9,6 +9,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.CompoundOrderRequest;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
+import fcai.sw.OrdersNotificationManagemntProject.Services.AdminService;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
 import fcai.sw.OrdersNotificationManagemntProject.Services.CustomerService;
 import org.json.JSONArray;
@@ -80,7 +81,7 @@ public class CustomerController {
     public String makeCompoundOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody CompoundOrderRequest orderRequests)
     {
         String message = "";
-        ArrayList<Order>all
+        ArrayList<Order> orders = new ArrayList<>();
         for (Map.Entry<Integer, OrderRequest> orderR: orderRequests.getCompoundOrder().entrySet()) {
             String username = orderR.getValue().getCustomer().getUsername();
             if(authentication.isUniqueCustomer(username))
@@ -88,10 +89,13 @@ public class CustomerController {
             else {
                 {
                     message += "Order " + (orderR.getKey() + 1) + " : " + customerService.makeOrder(orderR.getValue().getUserProducts(), orderR.getValue().getCustomer()) + "\n";
-
+                    orders.add(customerService.getLastOrder());
                 }
             }
         }
+        CompoundOrder compoundOrder = new CompoundOrder();
+        compoundOrder.setCompoundOrder(orders);
+        compoundOrder.setCompoundOrderId(customerService.getCompoundOrderLastID() + 1);
         customerService.addCompoundOrderService(compoundOrder);
         return message;
     }
@@ -139,4 +143,5 @@ public class CustomerController {
 //        return price OF this order to customer  and remove order
         return customerService.cancelOrder(order.getOrderId());
     }
+
 }

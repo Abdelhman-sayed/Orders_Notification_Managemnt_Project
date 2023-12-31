@@ -14,6 +14,10 @@ public class OrderDB {
         orders.add(order);
     }
 
+    public Order getLastOrder(){
+        return orders.get(orders.size() - 1);
+    }
+
     //    get order with idOrder
     public Order getOrder(int orderId) {
         Order o = new Order();

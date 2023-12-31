@@ -15,4 +15,5 @@ public class CompoundOrderDB {
     public ArrayList<CompoundOrder> getCompoundOrders(){
         return compoundOrdersDB;
     }
+    public int getSize(){if (compoundOrdersDB.isEmpty()) return 0; return compoundOrdersDB.size();}
 }
