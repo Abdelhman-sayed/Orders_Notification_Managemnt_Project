@@ -8,8 +8,10 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
+import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
 import org.springframework.stereotype.Service;
 
+import javax.swing.plaf.IconUIResource;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
@@ -30,6 +32,7 @@ public class CustomerService {
 //        first --> convert map to order
         Order o = new Order();
         ShippmentOrder ship = new ShippmentOrder();
+        ship.setShipped(false);
         o.setShipment(ship);
         float totalPrice = 0;
         for (Map.Entry<Integer, Integer> product: userProducts.entrySet()) {
@@ -49,21 +52,27 @@ public class CustomerService {
         o.setTotalPrice(totalPrice);
         o.setUsername(customer.getUsername());
         o.setOrderId(orderDB.retrieveOrders().size()+1);
-//        add notify
+//        update numNotifiedInEmail in customer DB
+        customerDB.updateNumNotifiedInEmail(customer.getUsername());
+//        create generator based on type
         MailGenerator typePlacement = new OrderPlacementMail();
+//        add notify
+        notification.makeNotification(typePlacement);
 //        then notify
-        String messageThroughEmail = notification.makeNotification(typePlacement, customer, o);
+        String messageThroughEmail = notification.notifyThroughMail(customer, o);
 //       update customer balance
         customerDB.updateBalance(customer.getUsername(), totalPrice);
-        System.out.println(totalPrice);
-        System.out.println(customer.getUsername());
-        //       then ----> call add order that is exist in OrderDB
+//       then ----> call add order that is exist in OrderDB
         orderDB.addOrder(o);
         return messageThroughEmail;
     }
-    public String cancelOrder(Integer OrderId) {
+    public String cancelOrder(Integer OrderId)
+    {
        Order CancelOrder = orderDB.getOrder(OrderId);
        customerDB.updateBalance(CancelOrder.getUsername(),-CancelOrder.getTotalPrice());
+       for(Product product: CancelOrder.getOrders()){
+            productDB.update(product.getSerialNumber(),-product.getRequiredAmount());
+       }
        orderDB.cancelOrder(CancelOrder);
        return "order cancelled successfully\n";
     }
@@ -78,26 +87,44 @@ public class CustomerService {
     public String makeShippingOrder(int orderId)
     {
         float shippingFees = 12.0F;
+        String messageNotifiy = "", message = "";
         Random random = new Random();
         Order o = orderDB.getOrder(orderId);
+        o.getShipment().setShippingFees(shippingFees);
+        Customer customer = customerDB.getCustomerByUsername(o.getUsername());
 //        if it's being shipped then reduce balance
         if(orderDB.shipmentState(orderId) == 0)
-            if(customerDB.getCustomerByUsername(o.getUsername()).getBalance()>= o.getShipment().getShippingFees())
+        {
+            if (customer.getBalance() >= o.getShipment().getShippingFees()) {
                 customerDB.updateBalance(o.getUsername(), o.getShipment().getShippingFees());
-            else
+                MailGenerator typeShipment = new OrderShipmentMail();
+                notification.makeNotification(typeShipment);
+//                increment numNotifiedEmail in customer DB with one
+                customerDB.updateNumNotifiedInEmail(customer.getUsername());
+                messageNotifiy = notification.notifyThroughMail(customer, o);
+                message = orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F);//0.1F + random.nextFloat() * (2F - 0.1F)
+            } else
                 return "Your balance is less than the Shipping Fees";
+        }
         // cancel shipping
         else {
             // return the fees back (increase balance)
-            if (orderDB.getOrder(orderId).getShipment().getCurrentTime()<((orderDB.getOrder(orderId).getShipment().getShipmentDuration())/2))
+            if (orderDB.getOrder(orderId).getShipment().getCurrentTime() < ((orderDB.getOrder(orderId).getShipment().getShipmentDuration())/2)) {
                 customerDB.updateBalance(o.getUsername(), -o.getShipment().getShippingFees());
+                message = orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F);//0.1F + random.nextFloat() * (2F - 0.1F)
+            }
             else
                 return "You can't cancel the order as you can cancel the shipment within a maximum of one day.";
         }
-        return orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F + random.nextFloat() * (4.5F - 0.5F));
+        return message + messageNotifiy;
     }
 //    return state to check --> possibility of make this service
-    public int showShipmentState(int orderId){
+    public int showShipmentState(int orderId)
+    {
         return orderDB.shipmentState(orderId);
     }
+//    public String makeCompoundOrder(ArrayList<OrderRequest> compoundOrders){
+//        String res;
+//        for (OrderRequest)
+//    }
 }

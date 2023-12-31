@@ -11,8 +11,9 @@ public class OrderShipmentMail implements MailGenerator {
     public String generator(Customer customer, Order order) {
         String allOrders = "";
         for (int i = 1;i <= order.getOrders().size();i++)
-            allOrders += ("" + i) + order.getOrders().get(i-1).getName() + " -> " + order.getOrders().get(i-1).getRequiredAmount();
-        String message = "Dear "+ customer.getUsername() +" , your booking of the " + allOrders + " is confirmed. And Shipping fees is " + order.getShipment().getShippingFees() + " thanks for using our store :)";
+            allOrders += ("\nProduct number: " + i)+ " | Product name: "+ order.getOrders().get(i-1).getName() + "  ->  " + order.getOrders().get(i-1).getRequiredAmount();
+        allOrders+="\n";
+        String message = "Dear "+ customer.getUsername() +" , your booking of the " + allOrders + " is confirmed. And Shipping fees is " + order.getShipment().getShippingFees() + "\n** Thanks for using our store :)";
         return message;
     }
 }

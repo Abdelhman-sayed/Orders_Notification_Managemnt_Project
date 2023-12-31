@@ -1,16 +1,21 @@
 package fcai.sw.OrdersNotificationManagemntProject.Models;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 
 public class ShippmentOrder {
     private boolean isShipped;
+    @Getter
     private float shipmentDuration;
+    @Getter
     private float currentTime;
+    @Getter
     private  float shippingFees;
     public ShippmentOrder(){
         this.shippingFees = 0;
         this.isShipped = false;
-        this.shipmentDuration = 0;
+        this.shipmentDuration = 2;
         this.currentTime = 0;
     }
 //    setter methods
@@ -36,15 +41,4 @@ public class ShippmentOrder {
         return isShipped;
     }
 
-    public float getShipmentDuration() {
-        return shipmentDuration;
-    }
-
-    public float getCurrentTime() {
-        return currentTime;
-    }
-
-    public float getShippingFees() {
-        return this.shippingFees;
-    }
 }

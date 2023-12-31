@@ -2,11 +2,10 @@ package fcai.sw.OrdersNotificationManagemntProject.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Services.AdminService;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/AdminAPI")
@@ -32,7 +31,7 @@ public class AdminController {
 //        placement most ---> set typeCheck with 1
 //        else -1
         if (typeCheck == -1)
-            return "Not have any notify message";
+            return "Number of Placement Order is equal to Shipping Order";
         String type = (typeCheck == 1)?"Placement Order":"Shipping Order";
         return "The most sent notification template is " + type;
     }
@@ -54,5 +53,9 @@ public class AdminController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    @PostMapping("/ShowOrderShippmentState")
+    public  String showOrderShipmentState(@RequestBody Order order){
+        return adminService.getShipmentState(order.getOrderId());
     }
 }

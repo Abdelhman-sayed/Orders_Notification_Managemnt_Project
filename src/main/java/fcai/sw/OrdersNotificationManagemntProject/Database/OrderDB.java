@@ -4,6 +4,7 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
 
 import java.util.ArrayList;
 public class OrderDB {
+
     private static ArrayList<Order> orders = new ArrayList<>();
     public OrderDB() {
 
@@ -62,12 +63,13 @@ public class OrderDB {
                     ship.setShipmentDuration(2);
                     ship.setCurrentTime(currentTime);
                     return "The order with ID " + orderId + " will be shipped in 2 days. You can cancel the shipment within a maximum of one day.";
-                } else {
+                }
+                else {
                     ship.setShipped(false);
-                    ship.setShippingFees(0);
-                    ship.setShipmentDuration(0);
-                    ship.setCurrentTime(0);
-                    return "The order is placed.";
+                    ship.setShippingFees(0F);
+                    ship.setShipmentDuration(0F);
+                    ship.setCurrentTime(0F);
+                    return "The order is placed without shipment.";
                 }
             }
         }

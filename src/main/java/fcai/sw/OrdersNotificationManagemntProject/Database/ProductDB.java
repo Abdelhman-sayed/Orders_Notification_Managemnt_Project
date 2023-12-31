@@ -26,8 +26,8 @@ public class ProductDB {
             product.setName(PRODUCT_NAMES[i]);
             product.setVendor(VENDORS[i]);
             product.setCategory(CATEGORIES[i]);
-            product.setPrice(random.nextFloat() * 100); // Random float price between 0 and 100
-            product.setAvailableQuantity(random.nextInt(100)); // Random integer available quantity between 0 and 99
+            product.setPrice(random.nextFloat() * 50); // Random float price between 0 and 100
+            product.setAvailableQuantity(100000); // Random integer available quantity between 0 and 99
             products.add(product);
         }
     }

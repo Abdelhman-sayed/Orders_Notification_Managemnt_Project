@@ -10,8 +10,8 @@ public class Notification {
     Queue<MailGenerator>notifications;
 //   to initialize placement and shipping with zero
     public  Notification(){
-        placementOrder = 5;
-        shippingOrder  = 7;
+        placementOrder = 0;
+        shippingOrder  = 0;
         notifications = new LinkedList<>();
     }
 //    get methods
@@ -22,17 +22,15 @@ public class Notification {
         return shippingOrder;
     }
 //  add mail to notify it
-    public  String makeNotification(MailGenerator mailGenerator, Customer customer, Order order){
+    public  void makeNotification(MailGenerator mailGenerator){
         if(mailGenerator instanceof OrderPlacementMail)
             placementOrder++;
         else
             shippingOrder++;
-//        notifications.add(mailGenerator);
-        return mailGenerator.generator(customer, order);
+        notifications.add(mailGenerator);
     }
 //    notify method
-//    public String notifyThroughMail(){
-////        generate mail
-//
-//    }
+    public String notifyThroughMail(Customer customer, Order order){
+        return notifications.poll().generator(customer, order);
+    }
 }

@@ -49,4 +49,13 @@ public class AdminService {
         String ordersJson = objectMapper.writeValueAsString(orderDB.retrieveOrders());
         return ordersJson;
     }
+//    to get shipment state of order with id
+    public String getShipmentState(int orderId){
+        int state = orderDB.shipmentState(orderId);
+        String message = "";
+        message = (state) == 1? "This order is Shipped."
+                :(state == 0)? "This order is not Shipped"
+                :"This order not Exist.";
+        return message;
+    }
 }

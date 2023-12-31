@@ -1,11 +1,17 @@
 package fcai.sw.OrdersNotificationManagemntProject.Models;
+import lombok.Getter;
+
 import java.util.ArrayList;
 
 public class Order {
+    @Getter
     private int orderId;
+    @Getter
     private String username;
+    @Getter
     private ShippmentOrder shipment;
 //    totalPrice for some order
+    @Getter
     private float totalPrice;
 //    isShipping
     private ArrayList<Product> order;
@@ -26,14 +32,6 @@ public class Order {
     }
 //    getter methods
     public void setShipment(ShippmentOrder shipment){this.shipment = shipment;}
-    public ShippmentOrder getShipment(){return this.shipment;}
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 
 
     public void addProduct(Product p){
@@ -41,8 +39,5 @@ public class Order {
     }
     public ArrayList<Product> getOrders(){
         return order;
-    }
-    public float getTotalPrice(){
-        return this.totalPrice;
     }
 }

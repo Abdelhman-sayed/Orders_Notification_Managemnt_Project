@@ -2,6 +2,7 @@ package fcai.sw.OrdersNotificationManagemntProject.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
+import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
@@ -59,10 +60,10 @@ public class CustomerController {
     }
     @PostMapping("/makeOrder")
     public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody OrderRequest orderRequest){
-        String username = tokenGenerator.extractUsername(jwtToken);
-      if (username == null)
+        String username = orderRequest.getCustomer().getUsername();
+        if (username == null)
           return "Unauthorized access. Please provide a valid token.";
-        System.out.println("username : " + username);
+//        System.out.println("username : " + username);
 //      return true --> if customer is unique
 //      return false --> if is exist
         if(authentication.isUniqueCustomer(username))
@@ -79,37 +80,37 @@ public class CustomerController {
         }
     }
     @PostMapping ("/ShippingOrder")
-    public String shipOrder(@RequestBody int orderId){
-        int state = customerService.showShipmentState(orderId);
+    public String shipOrder(@RequestBody Order order){
+        int state = customerService.showShipmentState(order.getOrderId());
         if(state == -1)
             return "This order id not exist.";
 //        we must check if this order we can make ship or no
 //        if it is shipped already so we can not make shipment again
         if(state == 1)
             return "This order is already shipped.";
-        return customerService.makeShippingOrder(orderId);
+        return customerService.makeShippingOrder(order.getOrderId());
     }
     @PostMapping ("/CancelShippingOrder")
-    public String cancelShipOrder(@RequestBody int orderId){
-        int state = customerService.showShipmentState(orderId);
+    public String cancelShipOrder(@RequestBody Order order){
+        int state = customerService.showShipmentState(order.getOrderId());
         if(state == -1)
             return "This order id not exist.";
 //        we must check if this order we can cancel ship of it or no
 //        if it is canceled or not shipped before so we can not cancel shipment
         if(state == 0)
             return "This order is canceled or not shipped before.";
-        return customerService.makeShippingOrder(orderId);
+        return customerService.makeShippingOrder(order.getOrderId());
     }
 //    cancel order ---> take order id as a parameter
     @PostMapping("/CancelOrder")
-    public String cancelOrder(@RequestBody int orderId){
-        int state = customerService.showShipmentState(orderId);
+    public String cancelOrder(@RequestBody Order order){
+        int state = customerService.showShipmentState(order.getOrderId());
         if(state == -1)
             return "This order id not exist.";
 //      shipped or no --> return shippingFees to customer
         if(state == 1)
-            customerService.makeShippingOrder(orderId);
+            customerService.makeShippingOrder(order.getOrderId());
 //        return price OF this order to customer  and remove order
-        return customerService.cancelOrder(orderId);
+        return customerService.cancelOrder(order.getOrderId());
     }
 }
