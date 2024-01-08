@@ -1,7 +1,6 @@
 package fcai.sw.OrdersNotificationManagemntProject.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fcai.sw.OrdersNotificationManagemntProject.Database.CompoundOrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
@@ -9,12 +8,8 @@ import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
 import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
-import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
-import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
 import org.springframework.stereotype.Service;
 
-import javax.swing.plaf.IconUIResource;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 @Service
@@ -23,17 +18,14 @@ public class CustomerService {
     OrderDB orderDB;
     ProductDB productDB;
     Notification notification;
-    CompoundOrderDB compoundOrderDB;
     public CustomerService() {
-        compoundOrderDB = new CompoundOrderDB();
         notification = new Notification();
         customerDB = new CustomerDB();
         orderDB = new OrderDB();
         productDB = new ProductDB();
     }
-//    map<idProduct, quantity>
-    public String makeOrder(Map<Integer, Integer> userProducts, Customer customer) {
-//        first --> convert map to order
+    private Order convertJsonToOrder(Map<Integer, Integer> userProducts, Customer customer){
+        //        first --> convert map to order
         Order o = new Order();
         ShippmentOrder ship = new ShippmentOrder();
         ship.setShipped(false);
@@ -54,6 +46,14 @@ public class CustomerService {
         o.setUsername(customer.getUsername());
         o.setOrderId(orderDB.retrieveOrders().size()+1);
         o.setShipment(new ShippmentOrder());
+        return o;
+    }
+    public String makeOrder(Map<Integer, Integer> userProducts, Customer customer) {
+//    map<idProduct, quantity>
+        Order order = new Order();
+//        this function to convert map to order object
+//        make steps after take order
+        order = convertJsonToOrder(userProducts,  customer);
 //        update numNotifiedInEmail in customer DB
         customerDB.updateNumNotifiedInEmail(customer.getUsername());
 //        create generator based on type
@@ -61,14 +61,13 @@ public class CustomerService {
 //        add notify
         notification.makeNotification(typePlacement);
 //        then notify
-        String messageThroughEmail = notification.notifyThroughMail(customer, o);
+        String messageThroughEmail = notification.notifyThroughMail(customer, order);
 //       update customer balance
-        customerDB.updateBalance(customer.getUsername(), totalPrice);
+        customerDB.updateBalance(customer.getUsername(), order.getTotalPrice());
 //       then ----> call add order that is exist in OrderDB
-        orderDB.addOrder(o);
+        orderDB.addOrder(order);
         return messageThroughEmail;
     }
-
     public String cancelOrder(Integer OrderId)
     {
        Order CancelOrder = orderDB.getOrder(OrderId);
@@ -87,7 +86,20 @@ public class CustomerService {
         return productsJson;
     }
 //   shipping order
-    public String makeShippingOrder(int orderId)
+    private String shipmentOrder(Order o, Customer customer){
+        String messageNotifiy = "", message = "";
+        customerDB.updateBalance(o.getUsername(), o.getShipment().getShippingFees());
+        MailGenerator typeShipment = new OrderShipmentMail();
+        notification.makeNotification(typeShipment);
+    //                increment numNotifiedEmail in customer DB with one
+        customerDB.updateNumNotifiedInEmail(customer.getUsername());
+        messageNotifiy = notification.notifyThroughMail(customer, o);
+        //0.1F + random.nextFloat() * (2F - 0.1F)
+        message = orderDB.shipOrderChangeState(o.getOrderId(), o.getShipment().getShippingFees(), 0.5F);
+        return message + messageNotifiy;
+    }
+//    this method has two cases cancel or make shipment.
+    public String changeStateShippingOrder(int orderId)
     {
         float shippingFees = 12.0F;
         String messageNotifiy = "", message = "";
@@ -99,13 +111,7 @@ public class CustomerService {
         if(orderDB.shipmentState(orderId) == 0)
         {
             if (customer.getBalance() >= o.getShipment().getShippingFees()) {
-                customerDB.updateBalance(o.getUsername(), o.getShipment().getShippingFees());
-                MailGenerator typeShipment = new OrderShipmentMail();
-                notification.makeNotification(typeShipment);
-//                increment numNotifiedEmail in customer DB with one
-                customerDB.updateNumNotifiedInEmail(customer.getUsername());
-                messageNotifiy = notification.notifyThroughMail(customer, o);
-                message = orderDB.shipOrderChangeState(orderId, shippingFees, 0.5F);//0.1F + random.nextFloat() * (2F - 0.1F)
+             return shipmentOrder(o, customer);
             } else
                 return "Your balance is less than the Shipping Fees";
         }
@@ -126,15 +132,7 @@ public class CustomerService {
     {
         return orderDB.shipmentState(orderId);
     }
-    public void addCompoundOrderService(CompoundOrder compoundOrder){
-        compoundOrderDB.addCompoundOrder(compoundOrder);
-    }
-
     public Order getLastOrder(){
         return orderDB.getLastOrder();
-    }
-
-    public int getCompoundOrderLastID(){
-        return compoundOrderDB.getSize();
     }
 }

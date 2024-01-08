@@ -1,16 +1,10 @@
 package fcai.sw.OrdersNotificationManagemntProject.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fcai.sw.OrdersNotificationManagemntProject.Database.CompoundOrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
-import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import javax.swing.plaf.PanelUI;
 
 @Service
 public class AdminService {

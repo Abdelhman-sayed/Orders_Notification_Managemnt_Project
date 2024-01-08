@@ -1,66 +1,19 @@
 package fcai.sw.OrdersNotificationManagemntProject.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import fcai.sw.OrdersNotificationManagemntProject.Database.ProductDB;
-import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Order;
-import fcai.sw.OrdersNotificationManagemntProject.Models.Product;
-import fcai.sw.OrdersNotificationManagemntProject.Models.ShippmentOrder;
-import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
-import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.CompoundOrderRequest;
-import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.Response;
-import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.TokenGenerator;
-import fcai.sw.OrdersNotificationManagemntProject.Services.AdminService;
 import fcai.sw.OrdersNotificationManagemntProject.Services.Authentication;
 import fcai.sw.OrdersNotificationManagemntProject.Services.CustomerService;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
 import fcai.sw.OrdersNotificationManagemntProject.RequsetsAndResponses.OrderRequest;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/API")
 public class CustomerController {
     private CustomerService customerService;
-    private TokenGenerator tokenGenerator;
     private Authentication authentication;
-
     public CustomerController() {
-        tokenGenerator = new TokenGenerator();
         customerService = new CustomerService();
         authentication = new Authentication();
-    }
-    //  register customer
-    @PostMapping("/register")
-    public Response register(@RequestBody Customer customer) {
-        Response response = new Response();
-
-        if (!authentication.isUniqueCustomer(customer.getUsername())) {
-            response.setStatus(false);
-            response.setMessage("This username is used before.");
-            return response;
-        }
-        response.setStatus(true);
-        response.setMessage(authentication.register(customer));
-        return response;
-    }
-    @PostMapping("/login")
-    public Response login(@RequestBody Customer customer) {
-        Response response = new Response();
-        if (authentication.login(customer)) {
-            String token = tokenGenerator.generateToken(customer.getUsername());
-            tokenGenerator.setTokenCookie(token);
-            response.setStatus(true);
-            response.setMessage("Hello, " + customer.getUsername() + ". You've logged in successfully :) (Your Token Saved in your Cookies)");
-            return response;
-        } else {
-            response.setStatus(false);
-            response.setMessage("Sorry, Invalid Cardinalities. Please Try Again.");
-            return response;
-        }
     }
     @PostMapping("/makeOrder")
     public String makeOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody OrderRequest orderRequest){
@@ -75,31 +28,6 @@ public class CustomerController {
         String Message = customerService.makeOrder(orderRequest.getUserProducts(), orderRequest.getCustomer());
         return "Order Placed Successfully" + Message;
     }
-
-    //   make compound order
-    @PostMapping("/makeCompoundOrder")
-    public String makeCompoundOrder(@CookieValue(name = "jwtToken", required = false) String jwtToken, @RequestBody CompoundOrderRequest orderRequests)
-    {
-        String message = "";
-        ArrayList<Order> orders = new ArrayList<>();
-        for (Map.Entry<Integer, OrderRequest> orderR: orderRequests.getCompoundOrder().entrySet()) {
-            String username = orderR.getValue().getCustomer().getUsername();
-            if(authentication.isUniqueCustomer(username))
-               message += "Order "+ (orderR.getKey() + 1) + "\nThis user is not Exist\n";
-            else {
-                {
-                    message += "Order " + (orderR.getKey() + 1) + " : " + customerService.makeOrder(orderR.getValue().getUserProducts(), orderR.getValue().getCustomer()) + "\n";
-                    orders.add(customerService.getLastOrder());
-                }
-            }
-        }
-        CompoundOrder compoundOrder = new CompoundOrder();
-        compoundOrder.setCompoundOrder(orders);
-        compoundOrder.setCompoundOrderId(customerService.getCompoundOrderLastID() + 1);
-        customerService.addCompoundOrderService(compoundOrder);
-        return message;
-    }
-
     @GetMapping("/ShowProducts")
     public String showProducts(){
         try {
@@ -118,7 +46,7 @@ public class CustomerController {
 //        if it is shipped already so we can not make shipment again
         if(state == 1)
             return "This order is already shipped.";
-        return customerService.makeShippingOrder(order.getOrderId());
+        return customerService.changeStateShippingOrder(order.getOrderId());
     }
     @PostMapping ("/CancelShippingOrder")
     public String cancelShipOrder(@RequestBody Order order){
@@ -129,7 +57,7 @@ public class CustomerController {
 //        if it is canceled or not shipped before so we can not cancel shipment
         if(state == 0)
             return "This order is canceled or not shipped before.";
-        return customerService.makeShippingOrder(order.getOrderId());
+        return customerService.changeStateShippingOrder(order.getOrderId());
     }
 //    cancel order ---> take order id as a parameter
     @PostMapping("/CancelOrder")
@@ -139,9 +67,8 @@ public class CustomerController {
             return "This order id not exist.";
 //      shipped or no --> return shippingFees to customer
         if(state == 1)
-            customerService.makeShippingOrder(order.getOrderId());
+            customerService.changeStateShippingOrder(order.getOrderId());
 //        return price OF this order to customer  and remove order
         return customerService.cancelOrder(order.getOrderId());
     }
-
 }
