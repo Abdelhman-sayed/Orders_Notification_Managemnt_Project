@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 
 public class ShippmentOrder {
-    private boolean isShipped;
+    public boolean isShipped;
     @Getter
     private float shipmentDuration;
     @Getter

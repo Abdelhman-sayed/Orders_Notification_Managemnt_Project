@@ -1,26 +1,17 @@
 package fcai.sw.OrdersNotificationManagemntProject.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fcai.sw.OrdersNotificationManagemntProject.Database.CompoundOrderDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.CustomerDB;
 import fcai.sw.OrdersNotificationManagemntProject.Database.OrderDB;
-import fcai.sw.OrdersNotificationManagemntProject.Models.CompoundOrder;
 import fcai.sw.OrdersNotificationManagemntProject.Models.Customer;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import javax.swing.plaf.PanelUI;
 
 @Service
 public class AdminService {
     private CustomerDB customerDB;
     private Notification notification;
     private OrderDB orderDB;
-    private CompoundOrderDB compoundOrderDB;
-
     public AdminService() {
-        compoundOrderDB = new CompoundOrderDB();
         orderDB = new OrderDB();
         customerDB = new CustomerDB();
         notification = new Notification();
@@ -66,12 +57,5 @@ public class AdminService {
                 : (state == 0) ? "This order is not Shipped"
                 : "This order not Exist.";
         return message;
-    }
-
-    public String showCompoundOrder() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // Convert the ArrayList to String JSON
-        String ordersJson = objectMapper.writeValueAsString(compoundOrderDB.getCompoundOrders());
-        return ordersJson;
     }
 }

@@ -54,12 +54,8 @@ public class AdminController {
             throw new RuntimeException(e);
         }
     }
-    @PostMapping("/ShowOrderShippmentState")
-    public  String showOrderShipmentState(@RequestBody Order order){
+    @PostMapping("/ShowOrderShipmentState")
+    public String showOrderShipmentState(@RequestBody Order order){
         return adminService.getShipmentState(order.getOrderId());
-    }
-    @GetMapping("/ShowCompoundOrder")
-    public String showAllCompoundOrder() throws JsonProcessingException {
-        return adminService.showCompoundOrder();
     }
 }

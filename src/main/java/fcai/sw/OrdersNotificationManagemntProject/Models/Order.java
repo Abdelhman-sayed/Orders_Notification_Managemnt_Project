@@ -9,7 +9,7 @@ public class Order {
     @Getter
     private String username;
     @Getter
-    private ShippmentOrder shipment;
+    public ShippmentOrder shipment;
 //    totalPrice for some order
     @Getter
     private float totalPrice;
